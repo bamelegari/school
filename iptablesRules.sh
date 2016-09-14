@@ -11,9 +11,14 @@ ip6tables -P OUTPUT DROP
 iptables -P INPUT DROP
 ip6tables -P INPUT DROP
 iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables --append INPUT -p udp -d 0.0.0.0/0 --dport 68 -s 10.250.100.12/32 --sport 67 --jump ACCEPT
 iptables --append OUTPUT -p udp -s 0.0.0.0/0 --sport 68 -d 10.250.100.12/32 --dport 67 --jump ACCEPT
 iptables --append OUTPUT -p udp -s 0.0.0.0/0 -d 8.8.8.8/32 --dport 53 --jump ACCEPT
+iptables --append INPUT -p udp -d 0.0.0.0/0 -s 8.8.8.8/32 --sport 53 --jump ACCEPT
+iptables --append OUTPUT -p tcp -s 0.0.0.0/0 -d 8.8.8.8/32 --dport 53 --jump ACCEPT
+iptables --append INPUT -p tcp -d 0.0.0.0/0 -s 8.8.8.8/32 --sport 53 --jump ACCEPT
 iptables --append OUTPUT -p tcp -s 0.0.0.0/0 -d 0.0.0.0/0 --dport 22 --jump ACCEPT
 iptables --append OUTPUT -p tcp -s 0.0.0.0/0 -d 0.0.0.0/0 --dport 80 --jump ACCEPT
 iptables --append OUTPUT -p tcp -s 0.0.0.0/0 -d 0.0.0.0/0 --dport 443 --jump ACCEPT
