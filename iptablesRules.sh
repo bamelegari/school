@@ -1,3 +1,5 @@
+#!/bin/bash
+
 iptables -F;
 ip6tables -F;
 iptables -X;
