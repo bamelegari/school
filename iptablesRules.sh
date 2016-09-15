@@ -5,14 +5,20 @@ ip6tables -F
 iptables -X
 ip6tables -X
 iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 iptables --append INPUT  -p udp -d 0.0.0.0/0 --dport 68 -s 10.20.20.1/32 --sport 67 --jump ACCEPT
 iptables --append OUTPUT -p udp -s 0.0.0.0/0 --sport 68 -d 10.20.20.1/32 --dport 67 --jump ACCEPT
 iptables --append OUTPUT -p udp -s 0.0.0.0/0 -d 10.20.20.1/32 --dport 53 --jump ACCEPT
 iptables --append INPUT -p udp -d 0.0.0.0/0 -s 10.20.20.1/32 --sport 53 --jump ACCEPT
-iptables --append OUTPUT -p tcp -s 0.0.0.0/0 -d 0.0.0.0/0 --dport 22 --jump ACCEPT
-iptables --append OUTPUT -p tcp -s 0.0.0.0/0 -d 0.0.0.0/0 --dport 80 --jump ACCEPT
-iptables --append OUTPUT -p tcp -s 0.0.0.0/0 -d 0.0.0.0/0 --dport 443 --jump ACCEPT
+#iptables --append INPUT -p tcp --dport 22 -m state --state NEW -m recent --set --name ssh --rsource 
+#iptables --append INPUT -p tcp --dport 22 -m state --state NEW -m recent ! --rcheck --seconds 30 --hitcount 4 --name ssh --rsource -j ACCEPT
+iptables --append INPUT -p tcp --dport 22  -m state --state NEW --jump ACCEPT
+iptables --append OUTPUT -p tcp --dport 22 -m state --state NEW --jump ACCEPT
+iptables --append OUTPUT -p tcp --dport 80 -m state --state NEW --jump ACCEPT
+iptables --append INPUT -p tcp --dport 80  -m state --state NEW --jump ACCEPT
+iptables --append OUTPUT -p tcp --dport 443 -m state --state NEW --jump ACCEPT
+iptables --append INPUT -p tcp --dport 443 -m state --state NEW --jump ACCEPT
 iptables -P FORWARD DROP
 ip6tables -P FORWARD DROP
 iptables -P OUTPUT DROP
